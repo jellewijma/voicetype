@@ -1,0 +1,48 @@
+# Voicetype Configuration
+# Copy this file to ~/.config/voicetype/config.yaml
+
+# Hyprland Keybind
+# Add this to your ~/.config/hypr/hyprland.conf:
+#   bind = , F12, exec, echo "toggle" | nc -U /tmp/voicetype.sock
+# Replace F12 with your preferred key.
+
+# Model settings
+model:
+  name: "distil-medium.en"  # Options: tiny.en, small.en, medium.en, distil-medium.en
+  device: "cuda"  # Options: cuda, cpu
+  compute_type: "float16"  # Options: float16, int8_float16, int8
+
+# Audio settings
+audio:
+  sample_rate: 16000
+  channels: 1
+  silence_threshold: 0.01
+  silence_duration: 1.5  # seconds before auto-stop
+
+# Text processing
+text_processing:
+  remove_fillers: true  # Remove um, uh, like, you know
+  auto_capitalize: true
+  auto_punctuate: true
+  trailing_punctuation: true
+
+# Personal dictionary - words to always recognize
+dictionary:
+  # Example:
+  # "voicetype": "VoiceType"
+  # "arch": "Arch Linux"
+
+# Snippets - short phrases that expand
+snippets:
+  # Example:
+  # "my email": "your.email@example.com"
+  # "my address": "123 Main St, City, State"
+
+# Application-specific settings
+# Override default behavior for specific apps
+app_overrides: {}
+  # Example:
+  # "code":  # VSCode
+  #   auto_format: false
+  # "discord":
+  #   remove_fillers: true
