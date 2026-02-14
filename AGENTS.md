@@ -109,9 +109,96 @@ Group imports: standard library, third‑party, local (none). Separate groups wi
 
 ## Git Conventions
 
-- Commit messages: concise, descriptive, imperative mood ("Add feature", "Fix bug", "Update docs").
+### Commit Messages
+- Use concise, descriptive, imperative mood ("Add feature", "Fix bug", "Update docs").
 - Reference issues or pull requests when applicable.
 - Keep commits focused; avoid unrelated changes.
+
+### Workflow for Adding Changes
+When making changes to the codebase, follow this workflow:
+
+1. **Check current status** before starting:
+   ```bash
+   git status
+   git diff
+   ```
+
+2. **Stage changes** for commit:
+   ```bash
+   # Stage specific files
+   git add path/to/file1.py path/to/file2.py
+   
+   # Stage all modified files
+   git add .
+   
+   # Stage all files (modified, new, deleted)
+   git add -A
+   ```
+
+3. **Review staged changes** before committing:
+   ```bash
+   git diff --cached
+   git status
+   ```
+
+4. **Create commit** with descriptive message:
+   ```bash
+   git commit -m "Brief summary of changes"
+   
+   # For multi-line commit messages
+   git commit -m "Summary line
+   
+   Detailed description of changes:
+   - Added feature X
+   - Fixed bug Y
+   - Updated documentation"
+   ```
+
+5. **Push to remote repository** (if you have permission):
+   ```bash
+   git push
+   
+   # Push to specific branch
+   git push origin branch-name
+   ```
+
+6. **Verify** the commit was successful:
+   ```bash
+   git log --oneline -5
+   git status
+   ```
+
+### Testing Before Committing
+Always run tests before committing changes:
+```bash
+# Run test suite
+python run_tests.py
+
+# Run specific tests
+python test_initialization.py
+python smoke_test.py
+```
+
+### Common Git Commands
+```bash
+# View commit history
+git log --oneline -10
+
+# View changes between commits
+git diff HEAD~1 HEAD
+
+# Undo local changes (dangerous!)
+git checkout -- path/to/file
+
+# Unstage files
+git reset HEAD path/to/file
+
+# Create new branch
+git checkout -b feature-branch-name
+
+# Merge branches
+git merge feature-branch-name
+```
 
 ## Cursor / Copilot Rules
 
