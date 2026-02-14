@@ -30,7 +30,7 @@ chmod +x install.sh
 
 ## Usage
 
-1. Start VoiceType:
+1. Start VoiceType (daemon mode):
    ```bash
    ./src/voicetype.py
    ```
@@ -40,10 +40,33 @@ chmod +x install.sh
    python src/voicetype.py
    ```
 
-2. Double-tap `Ctrl` to start recording
-3. Speak your text
-4. Double-tap `Ctrl` again to stop and transcribe
-5. Text is automatically typed into the active window
+2. Use the hotkey to start/stop recording:
+   - Double-tap `Ctrl` (default) sends toggle command via socket
+   - A small popup appears with "Listening..." while recording
+   - Speak your text, then double-tap `Ctrl` again to stop and transcribe
+   - Text is automatically typed into the active window
+
+### Shortcut-Triggered Mode (Auto Start)
+If you prefer the shortcut to start VoiceType automatically (no need to run manually):
+
+1. Use the wrapper script:
+   ```bash
+   chmod +x voicetype-toggle.sh
+   ./voicetype-toggle.sh
+   ```
+2. Bind this script to your preferred hotkey (e.g., F12):
+   ```bash
+   # In ~/.config/hypr/hyprland.conf:
+   bind = , F12, exec, /path/to/voicetype-toggle.sh
+   ```
+3. When you press the hotkey:
+   - VoiceType starts (if not running) and shows "Initializing..." popup
+   - After model loads, automatically starts recording ("Listening...")
+   - Press hotkey again to stop recording and transcribe
+ 
+## Command Line Options
+
+- `--auto-record`: Start recording automatically after initialization (shows "Initializing..." popup, then "Listening...")
 
 ## Configuration
 

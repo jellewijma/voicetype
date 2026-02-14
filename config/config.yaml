@@ -3,8 +3,10 @@
 
 # Hyprland Keybind
 # Add this to your ~/.config/hypr/hyprland.conf:
+#   bind = , F12, exec, /path/to/voicetype-toggle.sh
+# Replace F12 with your preferred key and update path to the wrapper script.
+# Alternative direct socket command (requires VoiceType already running):
 #   bind = , F12, exec, echo "toggle" | nc -U /tmp/voicetype.sock
-# Replace F12 with your preferred key.
 
 # Model settings
 model:
