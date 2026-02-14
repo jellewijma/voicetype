@@ -11,8 +11,13 @@ send_toggle() {
     echo "toggle" | nc -U "$SOCKET" 2>/dev/null
 }
 
-# If socket exists, assume VoiceType is running and send toggle command
-if [ -S "$SOCKET" ]; then
+# Check if socket exists and is actually alive (not stale)
+is_socket_alive() {
+    python3 -c "import socket; s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM); s.connect('$SOCKET'); s.close()" 2>/dev/null
+}
+
+# If socket exists and is alive, send toggle command
+if [ -S "$SOCKET" ] && is_socket_alive; then
     send_toggle
     exit 0
 fi
