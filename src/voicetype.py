@@ -34,7 +34,11 @@ from src.ui.popup import RecordingPopup  # noqa: E402
 from src.ui.tray import SystemTray  # noqa: E402
 from src.utils.errors import AudioDeviceError  # noqa: E402
 from src.utils.errors import HotkeyError  # noqa: E402
-from src.utils.errors import ConfigurationError, ModelError, TranscriptionError
+from src.utils.errors import (  # noqa: E402
+    ConfigurationError,
+    ModelError,
+    TranscriptionError,
+)
 from src.utils.recovery import log_error, setup_logging  # noqa: E402
 
 logger = logging.getLogger(__name__)
