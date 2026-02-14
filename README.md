@@ -2,6 +2,12 @@
 
 Local AI voice dictation for Linux, inspired by Wispr Flow. Uses faster-whisper for fast, accurate transcription.
 
+**Modular Architecture**: Refactored into clean, maintainable modules:
+- `src/core/`: Core functionality (audio, transcription, text processing, configuration)
+- `src/ui/`: User interface (system tray, popups, configuration dialog)
+- `src/integration/`: External integrations (Hyprland socket server)
+- `src/utils/`: Utilities (error handling, recovery, logging)
+
 ## Features
 
 - **Fast Transcription**: Uses distil-medium.en model optimized for RTX 3050 8GB
@@ -13,20 +19,57 @@ Local AI voice dictation for Linux, inspired by Wispr Flow. Uses faster-whisper 
   - Personal dictionary for custom words
   - Snippets for text expansion
 - **System Tray**: Easy access menu and status indicator
+- **Modular Design**: Clean separation of concerns for easier maintenance
+- **Robust Error Handling**: Graceful recovery from audio, model, and configuration errors
+- **Hyprland Integration**: Socket-based communication for hotkey handling
 
 ## Requirements
 
-- Arch Linux
+- Arch Linux (other distributions may work with manual dependency installation)
+- System dependencies (installed automatically by `install.sh`):
+  - `python`, `python-pip`, `python-pyaudio`, `portaudio`, `ffmpeg`
+  - `xdotool`, `xclip`, `gtk3`, `gobject-introspection`, `libnotify`
 - NVIDIA GPU with CUDA support (optional, for faster transcription)
 - Python 3.10+
 
 ## Installation
+
+### Automated Installation (Arch Linux)
+
+The `install.sh` script handles everything for Arch Linux:
 
 ```bash
 cd voicetype
 chmod +x install.sh
 ./install.sh
 ```
+
+This will:
+1. Install system dependencies via pacman
+2. Set up CUDA support if NVIDIA GPU detected
+3. Create Python virtual environment
+4. Install Python dependencies from `requirements.txt`
+5. Copy configuration to `~/.config/voicetype/config.yaml`
+6. Create desktop entry for autostart
+
+### Manual Installation (Other Distributions)
+
+1. Install system dependencies equivalent to those listed in Requirements
+2. Create virtual environment and install Python packages:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+3. Copy configuration manually:
+   ```bash
+   mkdir -p ~/.config/voicetype
+   cp config/config.yaml ~/.config/voicetype/config.yaml
+   ```
+4. Make the main script executable:
+   ```bash
+   chmod +x src/voicetype.py
+   ```
 
 ## Usage
 
@@ -67,31 +110,56 @@ If you prefer the shortcut to start VoiceType automatically (no need to run manu
 ## Command Line Options
 
 - `--auto-record`: Start recording automatically after initialization (shows "Initializing..." popup, then "Listening...")
+- `--debug`: Enable debug logging for troubleshooting
 
 ## Configuration
 
 Edit `~/.config/voicetype/config.yaml`:
 
 ```yaml
-# Change hotkey
-hotkey:
-  key: "ctrl"  # Options: ctrl, alt, shift, or any letter
-  double_tap: true
-
-# Change model (for different GPU/memory)
+# Model settings
 model:
   name: "distil-medium.en"  # Options: tiny.en, small.en, medium.en, distil-medium.en
   device: "cuda"  # Options: cuda, cpu
+  compute_type: "float16"  # Options: float16, int8_float16, int8
 
-# Personal dictionary
+# Audio settings
+audio:
+  sample_rate: 16000
+  channels: 1
+  silence_threshold: 0.01
+  silence_duration: 1.5  # seconds before auto-stop
+
+# Text processing
+text_processing:
+  remove_fillers: true  # Remove um, uh, like, you know
+  auto_capitalize: true
+  auto_punctuate: true
+  trailing_punctuation: true
+
+# Personal dictionary - words to always recognize
 dictionary:
-  "voicetype": "VoiceType"
-  "arch": "Arch Linux"
+  # Example:
+  # "voicetype": "VoiceType"
+  # "arch": "Arch Linux"
 
-# Snippets
+# Snippets - short phrases that expand
 snippets:
-  "my email": "your.email@example.com"
+  # Example:
+  # "my email": "your.email@example.com"
+  # "my address": "123 Main St, City, State"
+
+# Application-specific settings
+# Override default behavior for specific apps
+app_overrides: {}
+  # Example:
+  # "code":  # VSCode
+  #   auto_format: false
+  # "discord":
+  #   remove_fillers: true
 ```
+
+**Note**: Hotkey configuration is handled via Hyprland window manager bindings. See the [Usage](#usage) section for details.
 
 ## Models
 
@@ -115,27 +183,67 @@ cp ~/.local/share/applications/voicetype.desktop ~/.config/autostart/
 
 ## Testing
 
-VoiceType includes tests to verify the auto-start functionality:
+VoiceType includes a comprehensive test suite to verify functionality across the modular architecture:
 
 ```bash
 # Run all tests
 python run_tests.py
 
-# Run smoke test only (checks installation)
-python smoke_test.py
+# Run specific test suites:
+python smoke_test.py                 # Installation and basic functionality
+python test_initialization.py        # Model loading and initialization
+python test_integration.py           # Component integration tests
+python test_real_integration.py      # End-to-end integration with audio and transcription
 
-# Run initialization tests only
-python test_initialization.py
+# Run with options:
+python run_tests.py --skip-smoke     # Skip smoke test
+python run_tests.py --skip-init      # Skip initialization test
+python run_tests.py --skip-all       # Show summary only
 ```
 
 The tests verify:
 - Python dependencies are installed
 - Configuration files exist and are valid
-- Wrapper script is correctly set up
+- Modular components (audio, transcription, text processing, UI) work correctly
+- Error handling and recovery mechanisms
+- Socket communication for hotkey handling
 - Auto-record flag works correctly
 - Hyprland binding is configured (if using Hyprland)
 
- ## Troubleshooting
+## Development
+
+VoiceType follows a modular architecture and includes comprehensive development guidelines in [`AGENTS.md`](AGENTS.md). Key development commands:
+
+### Environment Setup
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Code Quality
+```bash
+black src/ tests/                # Format code
+isort src/ tests/                # Sort imports
+flake8 src/ tests/               # Lint
+mypy src/ --ignore-missing-imports  # Type checking
+```
+
+### Testing
+```bash
+pytest                           # Run all tests (if test suite expanded)
+python run_tests.py              # Run integration tests
+```
+
+### Architecture
+- `src/core/`: Core functionality (audio, transcription, text processing, configuration)
+- `src/ui/`: User interface components
+- `src/integration/`: External integrations
+- `src/utils/`: Utilities and error handling
+
+Refer to [`AGENTS.md`](AGENTS.md) for detailed contributor guidelines, git conventions, and code style.
+
+## Troubleshooting
  
  ### "No audio detected"
  - Check your microphone is working: `arecord -l`
