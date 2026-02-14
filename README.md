@@ -5,7 +5,7 @@ Local AI voice dictation for Linux, inspired by Wispr Flow. Uses faster-whisper 
 ## Features
 
 - **Fast Transcription**: Uses distil-medium.en model optimized for RTX 3050 8GB
-- **Hotkey Activation**: Double-tap Ctrl to start/stop recording
+- **Hotkey Activation**: Press SUPER+I to start/stop recording (auto-starts if not running)
 - **Cross-App Support**: Works in any application via xdotool
 - **Smart Text Processing**:
   - Removes filler words (um, uh, like, you know)
@@ -41,9 +41,9 @@ chmod +x install.sh
    ```
 
 2. Use the hotkey to start/stop recording:
-   - Double-tap `Ctrl` (default) sends toggle command via socket
-   - A small popup appears with "Listening..." while recording
-   - Speak your text, then double-tap `Ctrl` again to stop and transcribe
+   - Press `SUPER+I` (default) to toggle recording
+   - First press starts VoiceType if not running (shows "Initializing..." then "Listening...")
+   - Second press stops recording and transcribes
    - Text is automatically typed into the active window
 
 ### Shortcut-Triggered Mode (Auto Start)
@@ -54,10 +54,10 @@ If you prefer the shortcut to start VoiceType automatically (no need to run manu
    chmod +x voicetype-toggle.sh
    ./voicetype-toggle.sh
    ```
-2. Bind this script to your preferred hotkey (e.g., F12):
+2. Bind this script to your preferred hotkey:
    ```bash
-   # In ~/.config/hypr/hyprland.conf:
-   bind = , F12, exec, /path/to/voicetype-toggle.sh
+   # In ~/.config/hypr/hyprland.conf (e.g., SUPER+I):
+   bind = $mainMod, I, exec, /path/to/voicetype-toggle.sh
    ```
 3. When you press the hotkey:
    - VoiceType starts (if not running) and shows "Initializing..." popup
