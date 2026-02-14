@@ -32,13 +32,9 @@ from src.core.transcription import Transcriber  # noqa: E402
 from src.integration.socket_server import SocketListener  # noqa: E402
 from src.ui.popup import RecordingPopup  # noqa: E402
 from src.ui.tray import SystemTray  # noqa: E402
-from src.utils.errors import (  # noqa: E402
-    AudioDeviceError,  # noqa: E402
-    ConfigurationError,
-    HotkeyError,
-    ModelError,
-    TranscriptionError,
-)
+from src.utils.errors import AudioDeviceError  # noqa: E402
+from src.utils.errors import (ConfigurationError, HotkeyError,  # noqa: E402
+                              ModelError, TranscriptionError)
 from src.utils.recovery import log_error, setup_logging  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -277,6 +273,14 @@ class VoiceType:
             Gtk.main_quit()
             return False
         return True
+
+    def on_config_changed(self):
+        """Handle configuration changes."""
+        logger.info("Configuration changed")
+        # Components already reference the same config object, no need to reload.
+        # However, some settings may require restart (e.g., sample_rate).
+        # For now, just log.
+        pass
 
     def quit(self):
         logger.info("Shutting down VoiceType")

@@ -88,14 +88,45 @@ class SystemTray:
         self.app.toggle_recording()
 
     def _open_settings(self):
-        """Open settings file in editor."""
-        from ..core.config import CONFIG_FILE
-
-        editor = os.environ.get("EDITOR", "nano")
+        """Open configuration dialog (fallback to text editor if GUI unavailable)."""
         try:
-            subprocess.Popen([editor, str(CONFIG_FILE)])
-        except (FileNotFoundError, PermissionError) as e:
-            print(f"Failed to open settings: {e}")
+            import gi
+
+            gi.require_version("Gtk", "3.0")
+            from gi.repository import Gtk
+
+            from .config_dialog import ConfigDialog
+
+            # Create and run configuration dialog
+            dialog = ConfigDialog(self.app.config)
+            response = dialog.run()
+
+            if response == Gtk.ResponseType.OK:
+                # Save configuration
+                if dialog.save_configuration():
+                    # Notify application that configuration changed
+                    self.app.on_config_changed()
+            dialog.destroy()
+        except (ImportError, ValueError) as e:
+            print(f"GUI dependencies unavailable, falling back to text editor: {e}")
+            # Fallback to text editor
+            from ..core.config import CONFIG_FILE
+
+            editor = os.environ.get("EDITOR", "nano")
+            try:
+                subprocess.Popen([editor, str(CONFIG_FILE)])
+            except (FileNotFoundError, PermissionError) as e2:
+                print(f"Failed to open settings: {e2}")
+        except Exception as e:
+            print(f"Failed to open configuration dialog: {e}")
+            # Fallback to text editor
+            from ..core.config import CONFIG_FILE
+
+            editor = os.environ.get("EDITOR", "nano")
+            try:
+                subprocess.Popen([editor, str(CONFIG_FILE)])
+            except (FileNotFoundError, PermissionError) as e2:
+                print(f"Failed to open settings: {e2}")
 
     def _quit(self):
         """Quit application from tray menu."""
