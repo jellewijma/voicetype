@@ -113,6 +113,28 @@ mkdir -p ~/.config/autostart
 cp ~/.local/share/applications/voicetype.desktop ~/.config/autostart/
 ```
 
+## Testing
+
+VoiceType includes tests to verify the auto-start functionality:
+
+```bash
+# Run all tests
+python run_tests.py
+
+# Run smoke test only (checks installation)
+python smoke_test.py
+
+# Run initialization tests only
+python test_initialization.py
+```
+
+The tests verify:
+- Python dependencies are installed
+- Configuration files exist and are valid
+- Wrapper script is correctly set up
+- Auto-record flag works correctly
+- Hyprland binding is configured (if using Hyprland)
+
 ## Troubleshooting
 
 ### "No audio detected"
